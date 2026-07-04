@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Sample deck title — root2</title>
+    <meta
+      name="description"
+      content="A sample deck — each slide is a visual with the writing below it."
+    />
+    <link rel="canonical" href="https://root2.in/writings/sample-deck/" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;1,400&display=swap"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body id="top">
+    <nav class="nav" aria-label="Primary">
+      <div class="wrap">
+        <a class="wordmark" href="/">root<span class="two">2</span></a>
+        <button
+          class="nav-toggle"
+          aria-label="Menu"
+          aria-expanded="false"
+          aria-controls="nav-links"
+        >
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+            <path
+              d="M3 6h16M3 11h16M3 16h16"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="/writings/" aria-current="page">writings</a></li>
+          <li><a href="/labs/">labs</a></li>
+          <li><a href="/about/">about</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <article>
+        <header class="article-head read wrap">
+          <h1>Sample deck title</h1>
+          <p class="meta">3 slides · 2 min read · placeholder date</p>
+          <div class="tags">
+            <span class="tag">Learnings</span>
+          </div>
+        </header>
+
+        <div class="read wrap">
+          <!-- Each chapter = a visual (slide) with the writing below it. -->
+          <section class="chapter">
+            <div class="chapter-visual rise" aria-hidden="true">
+              <span class="rootlabel">root 1</span>
+              <!-- Drop an <img> here later, e.g.:
+                   <img src="/assets/img/slide-1.png" alt="" /> -->
+            </div>
+            <h2 class="chapter-statement fade">
+              A short, clear statement goes here.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                The writing for this slide sits right below its visual. Say the
+                thing, then explain it — the reason, the story, or an example.
+              </p>
+              <p>
+                As you scroll, each slide and its text rise into view. Keep the
+                visual simple; let the words carry the idea.
+              </p>
+            </div>
+          </section>
+
+          <section class="chapter">
+            <div class="chapter-visual rise" aria-hidden="true">
+              <span class="rootlabel">root 2</span>
+            </div>
+            <h2 class="chapter-statement fade">The second idea of the post.</h2>
+            <div class="chapter-text fade">
+              <p>A sentence or two explaining it.</p>
+            </div>
+          </section>
+
+          <section class="chapter">
+            <div class="chapter-visual rise" aria-hidden="true">
+              <span class="rootlabel">root 3</span>
+            </div>
+            <h2 class="chapter-statement fade">And a third to close.</h2>
+            <div class="chapter-text fade">
+              <p>A sentence or two explaining it.</p>
+            </div>
+          </section>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <a class="wordmark" href="/">root<span class="two">2</span></a>
+        <span class="copyright">© 2026 Ruturaj Dhekane</span>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>

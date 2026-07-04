@@ -1,0 +1,4 @@
+# Local preview / tooling artifacts
+err.log
+_preview.png
+.DS_Store

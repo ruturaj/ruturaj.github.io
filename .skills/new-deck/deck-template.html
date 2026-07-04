@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>{{TITLE}} — root2</title>
+    <meta name="description" content="{{SUMMARY}}" />
+    <link rel="canonical" href="https://root2.in/writings/{{SLUG}}/" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;1,400&display=swap"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body id="top">
+    <nav class="nav" aria-label="Primary">
+      <div class="wrap">
+        <a class="wordmark" href="/">root<span class="two">2</span></a>
+        <button
+          class="nav-toggle"
+          aria-label="Menu"
+          aria-expanded="false"
+          aria-controls="nav-links"
+        >
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+            <path
+              d="M3 6h16M3 11h16M3 16h16"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="/writings/" aria-current="page">writings</a></li>
+          <li><a href="/labs/">labs</a></li>
+          <li><a href="/about/">about</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <article>
+        <header class="article-head read wrap">
+          <h1>{{TITLE}}</h1>
+          <p class="meta">{{SLIDE_COUNT}} slides · {{READ_TIME}} read · {{DATE}}</p>
+          <div class="tags">
+            <span class="tag">{{TOPIC}}</span>
+          </div>
+        </header>
+
+        <div class="read wrap">
+          <!-- One <section class="chapter"> per slide. Number rootlabels in order.
+               Drop an <img src="/assets/img/..." alt="..."> inside .chapter-visual
+               to replace the animated placeholder. -->
+          <section class="chapter">
+            <div class="chapter-visual rise" aria-hidden="true">
+              <span class="rootlabel">root 1</span>
+            </div>
+            <h2 class="chapter-statement fade">First statement.</h2>
+            <div class="chapter-text fade">
+              <p>The writing that explains the statement above.</p>
+            </div>
+          </section>
+
+          <section class="chapter">
+            <div class="chapter-visual rise" aria-hidden="true">
+              <span class="rootlabel">root 2</span>
+            </div>
+            <h2 class="chapter-statement fade">Second statement.</h2>
+            <div class="chapter-text fade">
+              <p>The writing that explains the statement above.</p>
+            </div>
+          </section>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <a class="wordmark" href="/">root<span class="two">2</span></a>
+        <span class="copyright">© 2026 Ruturaj Dhekane</span>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>

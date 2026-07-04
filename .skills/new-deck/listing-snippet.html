@@ -1,0 +1,14 @@
+<!-- Listing item for the writings list. Paste at the TOP of
+     <ul class="deck-links"> in both writings/index.html and index.html
+     (home). data-topic must be the lowercase, hyphenated topic slug so the
+     filter chips work: product | real-estate | observations | learnings | … -->
+<li data-topic="{{TOPIC_SLUG}}">
+  <a href="/writings/{{SLUG}}/">
+    <span>
+      <span class="dl-topic">{{TOPIC}}</span>
+      <span class="dl-title">{{TITLE}}</span>
+      <span class="dl-summary">{{SUMMARY}}</span>
+    </span>
+    <span class="dl-meta">{{SLIDE_COUNT}} slides · {{READ_TIME}}</span>
+  </a>
+</li>

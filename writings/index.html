@@ -8,12 +8,12 @@
       content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <title>root2 — writings &amp; experiments</title>
+    <title>Writings — root2</title>
     <meta
       name="description"
-      content="Writings and experiments — each post is a deck you read like a page."
+      content="All writings, filterable by topic — each post is a deck you read like a page."
     />
-    <link rel="canonical" href="https://root2.in/" />
+    <link rel="canonical" href="https://root2.in/writings/" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,7 +24,6 @@
     <link rel="stylesheet" href="/assets/css/styles.css" />
   </head>
   <body id="top">
-    <!-- ===== nav ===== -->
     <nav class="nav" aria-label="Primary">
       <div class="wrap">
         <a class="wordmark" href="/">root<span class="two">2</span></a>
@@ -44,7 +43,7 @@
           </svg>
         </button>
         <ul class="nav-links" id="nav-links">
-          <li><a href="/writings/">writings</a></li>
+          <li><a href="/writings/" aria-current="page">writings</a></li>
           <li><a href="/labs/">labs</a></li>
           <li><a href="/about/">about</a></li>
         </ul>
@@ -52,24 +51,26 @@
     </nav>
 
     <main>
-      <!-- ===== hero ===== -->
-      <header class="hero wrap">
-        <h1>Writings and experiments.</h1>
-        <p class="lede">Notes on product, building, and things I'm learning.</p>
-
-        <div class="banner rise" aria-hidden="true">
-          <span class="blob b1"></span>
-          <span class="blob b2"></span>
-          <span class="blob b3"></span>
-          <span class="banner-mark serif">√2</span>
-        </div>
+      <header class="page-intro wrap">
+        <h1>Writings</h1>
+        <p>Each post is a deck — read it like a page. Filter by topic.</p>
       </header>
 
-      <!-- ===== writings list ===== -->
-      <section class="wrap section-divide fade" aria-labelledby="writings-h">
-        <div class="section-head">
-          <h2 id="writings-h">Writings</h2>
-          <a class="more" href="/writings/">See all →</a>
+      <section class="wrap">
+        <div class="filters" role="group" aria-label="Filter by topic">
+          <button class="chip" data-filter="all" aria-pressed="true">All</button>
+          <button class="chip" data-filter="product" aria-pressed="false">
+            Product
+          </button>
+          <button class="chip" data-filter="real-estate" aria-pressed="false">
+            Real estate
+          </button>
+          <button class="chip" data-filter="observations" aria-pressed="false">
+            Observations
+          </button>
+          <button class="chip" data-filter="learnings" aria-pressed="false">
+            Learnings
+          </button>
         </div>
 
         <ul class="deck-links">
@@ -86,36 +87,10 @@
             </a>
           </li>
         </ul>
-      </section>
-
-      <!-- ===== labs preview ===== -->
-      <section class="wrap section-divide fade" aria-labelledby="labs-h">
-        <div class="section-head">
-          <h2 id="labs-h">Labs</h2>
-          <a class="more" href="/labs/">See all →</a>
-        </div>
-
-        <div class="lab-grid">
-          <a class="lab-card" href="/labs/">
-            <p class="status">Building</p>
-            <h3>Project one</h3>
-            <p>A line about what this is.</p>
-          </a>
-          <a class="lab-card" href="/labs/">
-            <p class="status">Shipped</p>
-            <h3>Project two</h3>
-            <p>A line about what this is.</p>
-          </a>
-          <a class="lab-card" href="/labs/">
-            <p class="status">Exploring</p>
-            <h3>Project three</h3>
-            <p>A line about what this is.</p>
-          </a>
-        </div>
+        <p class="empty" hidden>No writings in this topic yet.</p>
       </section>
     </main>
 
-    <!-- ===== footer ===== -->
     <footer class="site-foot">
       <div class="wrap">
         <a class="wordmark" href="/">root<span class="two">2</span></a>
