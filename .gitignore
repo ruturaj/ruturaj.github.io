@@ -2,3 +2,6 @@
 err.log
 _preview.png
 .DS_Store
+
+# Blog source outlines (kept out of the published site)
+blogoutlines/
