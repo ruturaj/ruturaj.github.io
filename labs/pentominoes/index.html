@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>The pentomino puzzle, and how AI helped me solve it — root2</title>
+    <meta
+      name="description"
+      content="Twelve shapes, one perfect rectangle, thousands of solutions — an obsession passed down in my family, and the small backtracking engine I finally built with AI."
+    />
+    <link rel="canonical" href="https://root2.in/labs/pentominoes/" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;1,400&display=swap"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+
+    <!-- page-scoped styling: calm 'specimen plate' slides, like a museum plate -->
+    <style>
+      /* A slide visual becomes a calm plate: warm paper, hairline frame,
+         generous whitespace, a small serif caption. Content decides height. */
+      .chapter-visual.plate {
+        aspect-ratio: auto;
+        background: #f7f6f2;
+        border: 1px solid #e7e5df;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        padding: clamp(30px, 6vw, 64px) clamp(20px, 5vw, 54px)
+          clamp(50px, 6vw, 68px);
+        min-height: clamp(250px, 44vw, 440px);
+      }
+
+      .plate .rootlabel {
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+      }
+
+      .plate-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 16px;
+        text-align: center;
+        font-family: "Source Serif 4", Georgia, serif;
+        font-style: italic;
+        font-size: 14px;
+        color: var(--faint);
+        padding: 0 20px;
+      }
+
+      /* specimen images */
+      .specimen {
+        width: 100%;
+        max-width: 560px;
+        margin: 0 auto;
+      }
+      .specimen.wide {
+        max-width: 720px;
+      }
+      .specimen img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* quotation plate — Clarke, and the one-line asides */
+      .quote-plate {
+        max-width: 620px;
+        text-align: center;
+      }
+      .quote-plate blockquote {
+        margin: 0;
+        font-family: "Source Serif 4", Georgia, serif;
+        font-size: clamp(22px, 4vw, 34px);
+        line-height: 1.28;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+      .quote-plate cite {
+        display: block;
+        margin-top: 20px;
+        font-family: "Inter", system-ui, sans-serif;
+        font-style: normal;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: var(--faint);
+      }
+
+      /* solution + count (slide 3) */
+      .solution-stat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: clamp(18px, 4vw, 44px);
+        width: 100%;
+        max-width: 660px;
+      }
+      .solution-stat .specimen {
+        flex: 1 1 300px;
+        max-width: 420px;
+      }
+      .solution-stat .stat {
+        flex: 0 1 auto;
+        text-align: center;
+      }
+      .solution-stat .stat-num {
+        display: block;
+        font-size: clamp(40px, 7vw, 64px);
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+      }
+      .solution-stat .stat-label {
+        display: block;
+        margin: 6px auto 0;
+        font-size: 15px;
+        color: var(--muted);
+        max-width: 170px;
+      }
+
+      /* swipeable galleries — pure CSS scroll-snap (touch + trackpad) */
+      .gallery {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        width: 100%;
+        max-width: 660px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 6px;
+        scrollbar-width: thin;
+      }
+      .gallery .shot {
+        flex: 0 0 78%;
+        margin: 0;
+        scroll-snap-align: center;
+      }
+      .gallery .frame {
+        aspect-ratio: 4 / 3;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #efeee9;
+        border: 1px solid #e0ded7;
+        display: grid;
+        place-items: center;
+      }
+      .gallery .frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .gallery .frame .ph {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .gallery figcaption {
+        margin-top: 10px;
+        font-family: "Source Serif 4", Georgia, serif;
+        font-style: italic;
+        font-size: 14px;
+        color: var(--muted);
+        text-align: center;
+      }
+      /* boards gallery: keep each board's own shape, don't crop */
+      .gallery.boards .frame {
+        aspect-ratio: auto;
+        background: #f7f6f2;
+        padding: 16px;
+        min-height: 150px;
+      }
+      .gallery.boards .frame img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+      .swipe-hint {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        color: var(--faint);
+      }
+
+      /* recursion demo (slide 6) */
+      .recursion {
+        width: 100%;
+        max-width: 460px;
+        text-align: center;
+      }
+      .rec-board {
+        display: grid;
+        grid-template-columns: repeat(var(--cols, 6), 1fr);
+        gap: 5px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .rec-cell {
+        aspect-ratio: 1;
+        border-radius: 5px;
+        background: #e7e5df;
+        transition: background 0.4s ease;
+      }
+      .rec-cell.on {
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+      }
+      .rec-note {
+        margin: 18px 0 0;
+        font-family: "Source Serif 4", Georgia, serif;
+        font-style: italic;
+        font-size: 15px;
+        color: var(--muted);
+        min-height: 1.4em;
+        transition: color 0.3s ease;
+      }
+      .rec-note.back {
+        color: var(--accent);
+      }
+
+      /* prompt -> code (slide 7) */
+      .prompt-anim {
+        width: 100%;
+        max-width: 560px;
+      }
+      .pa-window {
+        width: 100%;
+        background: #fbfbfa;
+        border: 1px solid #e2e0d9;
+        border-radius: 12px;
+        overflow: hidden;
+        text-align: left;
+      }
+      .pa-bar {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 14px;
+        border-bottom: 1px solid #eceae4;
+        background: #f3f2ee;
+      }
+      .pa-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #d9d7d0;
+      }
+      .pa-file {
+        margin-left: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: var(--faint);
+      }
+      .pa-body {
+        position: relative;
+        padding: 16px 18px;
+        min-height: 232px;
+      }
+      .pa-prompt {
+        margin: 0;
+        font-family: "Source Serif 4", Georgia, serif;
+        font-size: 15.5px;
+        line-height: 1.62;
+        color: #3a3a42;
+        white-space: pre-wrap;
+        transition: opacity 0.4s ease;
+      }
+      .pa-code {
+        margin: 0;
+        display: none;
+        font-family: "SFMono-Regular", "Consolas", "Liberation Mono", Menlo,
+          monospace;
+        font-size: 13px;
+        line-height: 1.62;
+        color: #33333a;
+        white-space: pre;
+        overflow-x: auto;
+      }
+      .prompt-anim.to-code .pa-prompt {
+        opacity: 0;
+      }
+      .prompt-anim.show-code .pa-prompt {
+        display: none;
+      }
+      .prompt-anim.show-code .pa-code {
+        display: block;
+        animation: paFade 0.5s ease both;
+      }
+      .prompt-anim.show-both .pa-code {
+        display: block;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid #eceae4;
+      }
+      @keyframes paFade {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      /* closing placeholder (slide 8 — final visual chosen later) */
+      .closing-ph {
+        width: 100%;
+        max-width: 460px;
+        aspect-ratio: 16 / 9;
+        border: 1px dashed #d8d6cf;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: var(--faint);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      /* a quiet back link to the labs index */
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+      .back-link:hover {
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      @media (max-width: 560px) {
+        .chapter-visual.plate {
+          min-height: 220px;
+          border-radius: 14px;
+        }
+        .specimen,
+        .specimen.wide {
+          max-width: 100%;
+        }
+        .gallery .shot {
+          flex-basis: 86%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rec-cell,
+        .rec-note,
+        .pa-prompt {
+          transition: none;
+        }
+        .prompt-anim.show-code .pa-code {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <nav class="nav" aria-label="Primary">
+      <div class="wrap">
+        <a class="wordmark" href="/">root<span class="two">2</span></a>
+        <button
+          class="nav-toggle"
+          aria-label="Menu"
+          aria-expanded="false"
+          aria-controls="nav-links"
+        >
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+            <path
+              d="M3 6h16M3 11h16M3 16h16"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="/writings/">writings</a></li>
+          <li><a href="/labs/" aria-current="page">labs</a></li>
+          <li><a href="/about/">about</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <article>
+        <header class="article-head read wrap">
+          <a class="back-link" href="/labs/">← Labs</a>
+          <h1>The pentomino puzzle, and how AI helped me solve it</h1>
+          <p class="meta">8 slides · 4 min read · lab 01</p>
+          <div class="tags">
+            <span class="tag">Puzzles</span>
+            <span class="tag">AI productivity</span>
+          </div>
+        </header>
+
+        <div class="read wrap">
+          <!-- 1 — what is a pentomino -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 1</span>
+              <div class="specimen wide">
+                <img
+                  src="/assets/img/pento-twelve.svg"
+                  alt="The twelve pentominoes, each labelled with the letter it resembles: F, I, L, N, P, T, U, V, W, X, Y, Z"
+                />
+              </div>
+              <span class="plate-caption">The twelve pentominoes</span>
+            </div>
+            <h2 class="chapter-statement fade">
+              A pentomino is five squares joined edge to edge — and there are
+              exactly twelve.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                Two squares make a domino; five make a pentomino. Ignore
+                rotations and mirror images and there are exactly twelve, each
+                named for the letter it resembles — F, I, L, N, P, T, U, V, W, X,
+                Y, Z. The classic challenge: fit all twelve into one rectangle,
+                with no gaps.
+              </p>
+            </div>
+          </section>
+
+          <!-- 2 — the travelling companion (Clarke) -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 2</span>
+              <div class="quote-plate">
+                <blockquote>“HELP! I Am a Pentomino Addict.”</blockquote>
+                <cite>Arthur C. Clarke · 1975</cite>
+              </div>
+              <span class="plate-caption">the perfect travelling companion</span>
+            </div>
+            <h2 class="chapter-statement fade">
+              Arthur C. Clarke played it on his palm, all the way across the
+              city.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                The author of <em>2001: A Space Odyssey</em> was a self-confessed
+                addict. It made the perfect travelling companion — no board
+                needed, just the twelve shapes held in his head. On a train, a
+                bus, the metro, he would trace and re-trace them on his palm and
+                lose whole journeys to it, never noticing the stops go by.
+              </p>
+            </div>
+          </section>
+
+          <!-- 3 — a solution, and how many there are -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 3</span>
+              <div class="solution-stat">
+                <div class="specimen">
+                  <img
+                    src="/assets/img/pento-solved.svg"
+                    alt="A solved 6 by 10 pentomino board, twelve shapes fitting together with no gaps"
+                  />
+                </div>
+                <div class="stat">
+                  <span class="stat-num">2,339</span>
+                  <span class="stat-label">solutions on the 6 × 10 board</span>
+                </div>
+              </div>
+              <span class="plate-caption">
+                hidden among billions of near-misses
+              </span>
+            </div>
+            <h2 class="chapter-statement fade">
+              Thousands of right answers — and the last two pieces still betray
+              you.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                Here is one solution. The 6 × 10 board has 2,339 of them in all —
+                yet they are buried among billions of wrong arrangements. Pieces
+                slot together beautifully until the final two refuse to fit and
+                you unravel half the board. Always one move from triumph, one
+                from starting over — which is exactly why it is impossible to put
+                down.
+              </p>
+            </div>
+          </section>
+
+          <!-- 4 — an obsession passed down: dad + daughter -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 4</span>
+              <span class="swipe-hint" aria-hidden="true">swipe →</span>
+              <!-- Replace each .frame's placeholder with an <img src="/assets/img/…" alt="…" />
+                   when the family photos are ready. Add or remove .shot figures freely. -->
+              <div
+                class="gallery"
+                role="group"
+                aria-label="Family photos (coming soon)"
+              >
+                <figure class="shot">
+                  <div class="frame"><span class="ph">Photo</span></div>
+                  <figcaption>Dad’s finished board</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame"><span class="ph">Photo</span></div>
+                  <figcaption>Teaching my daughter</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame"><span class="ph">Photo</span></div>
+                  <figcaption>Her turn to solve it</figcaption>
+                </figure>
+              </div>
+              <span class="plate-caption">photos coming soon — swipe through</span>
+            </div>
+            <h2 class="chapter-statement fade">
+              My dad doesn’t just play it — he <span class="b">solves</span> it.
+              And now, so does my daughter.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                For my dad it is a lifelong habit. He actually solves these — and
+                most weeks a photo of a finished board lands in our family
+                WhatsApp group, pieces packed edge to edge, almost as a quiet
+                flex. Lately he has been passing it on: teaching my daughter the
+                shapes, the two of them hunched over the same tray until she can
+                place the tricky pieces herself. She loves it now as much as he
+                does — an obsession handed down a generation.
+              </p>
+            </div>
+          </section>
+
+          <!-- 5 — the board variations -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 5</span>
+              <span class="swipe-hint" aria-hidden="true">swipe →</span>
+              <div
+                class="gallery boards"
+                role="group"
+                aria-label="The same pieces on four different boards"
+              >
+                <figure class="shot">
+                  <div class="frame">
+                    <img src="/assets/img/pento-solved.svg" alt="A solved 6 by 10 board" />
+                  </div>
+                  <figcaption>6 × 10 · 2,339 solutions</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame">
+                    <img src="/assets/img/pento-5x12.svg" alt="A solved 5 by 12 board" />
+                  </div>
+                  <figcaption>5 × 12 · 1,010 solutions</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame">
+                    <img src="/assets/img/pento-4x15.svg" alt="A solved 4 by 15 board" />
+                  </div>
+                  <figcaption>4 × 15 · 368 solutions</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame">
+                    <img src="/assets/img/pento-3x20.svg" alt="A solved 3 by 20 board" />
+                  </div>
+                  <figcaption>3 × 20 · just 2 solutions</figcaption>
+                </figure>
+              </div>
+              <span class="plate-caption">same pieces, four different boards</span>
+            </div>
+            <h2 class="chapter-statement fade">
+              Same twelve pieces. Four different boards. Thousands of ways each.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                Sixty squares rearrange into four perfect rectangles — 6 × 10,
+                5 × 12, 4 × 15, and 3 × 20. Each is its own puzzle with its own
+                number of solutions, from a comfortable 2,339 down to the brutal
+                3 × 20, which has just two. Same pieces, wildly different
+                difficulty.
+              </p>
+            </div>
+          </section>
+
+          <!-- 6 — recursion demo -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 6</span>
+              <div class="recursion" id="pento-recursion" data-anim="recursion">
+                <div class="rec-board" aria-hidden="true"></div>
+                <p class="rec-note" aria-hidden="true">Placing pieces…</p>
+              </div>
+              <span class="plate-caption">place · dead end · take it back · try again</span>
+            </div>
+            <h2 class="chapter-statement fade">
+              This is how the computer thinks: try, fail, take it back, try
+              again.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                Watch the board fill. The solver drops a piece into the first
+                empty cell, then the next — and the moment nothing fits, it
+                calmly takes the last piece back and tries another. That single
+                move, undoing a step to explore a different one, is recursion.
+                The machine just does it a few billion times without ever getting
+                bored.
+              </p>
+            </div>
+          </section>
+
+          <!-- 7 — describe it, and watch it appear -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 7</span>
+              <div class="prompt-anim" id="pento-prompt" data-anim="prompt">
+                <div class="pa-window">
+                  <div class="pa-bar" aria-hidden="true">
+                    <span class="pa-dot"></span>
+                    <span class="pa-dot"></span>
+                    <span class="pa-dot"></span>
+                    <span class="pa-file">ask Copilot</span>
+                  </div>
+                  <div class="pa-body">
+                    <pre class="pa-prompt" aria-hidden="true"></pre>
+                    <pre class="pa-code" aria-hidden="true"></pre>
+                  </div>
+                </div>
+              </div>
+              <span class="plate-caption">describe it in plain English — watch it appear</span>
+            </div>
+            <h2 class="chapter-statement fade">
+              For years I couldn’t finish this. This time, I just described it.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                The idea was never the problem; getting every moving part right
+                was. I had started this solver more times than I can count and
+                always abandoned it. This time I wrote down what I wanted in plain
+                English, handed it to an AI inside my editor, and the code I could
+                never quite finish simply took shape.
+              </p>
+            </div>
+          </section>
+
+          <!-- 8 — closing (final visual chosen later) -->
+          <section class="chapter">
+            <div class="chapter-visual plate rise">
+              <span class="rootlabel">root 8</span>
+              <div class="closing-ph" aria-hidden="true">Closing visual — TBD</div>
+              <span class="plate-caption">a childhood puzzle, finally answered</span>
+            </div>
+            <h2 class="chapter-statement fade">
+              A childhood puzzle, an old obsession — finally answered in code.
+            </h2>
+            <div class="chapter-text fade">
+              <p>
+                Twelve shapes, one stubborn rectangle, and a habit that runs
+                through three generations of my family. What my dad does by hand
+                on a quiet afternoon, a few lines of backtracking now do in an
+                instant. Same puzzle, same joy — just a new way to say: yes, it
+                can be solved.
+              </p>
+            </div>
+          </section>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <a class="wordmark" href="/">root<span class="two">2</span></a>
+        <span class="copyright">© 2026 Ruturaj Dhekane</span>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+
+    <script src="/assets/js/main.js" defer></script>
+    <script src="/assets/js/pento-frames.js" defer></script>
+    <script src="/assets/js/pento-anim.js" defer></script>
+  </body>
+</html>
