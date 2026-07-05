@@ -318,21 +318,6 @@
         }
       }
 
-      /* closing placeholder (slide 8 — final visual chosen later) */
-      .closing-ph {
-        width: 100%;
-        max-width: 460px;
-        aspect-ratio: 16 / 9;
-        border: 1px dashed #d8d6cf;
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        color: var(--faint);
-        font-size: 13px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
       /* a quiet back link to the labs index */
       .back-link {
         display: inline-flex;
@@ -657,23 +642,78 @@
             </div>
           </section>
 
-          <!-- 8 — closing (final visual chosen later) -->
+          <!-- 8 — closing: variations and what's next -->
           <section class="chapter">
             <div class="chapter-visual plate rise">
               <span class="rootlabel">root 8</span>
-              <div class="closing-ph" aria-hidden="true">Closing visual — TBD</div>
-              <span class="plate-caption">a childhood puzzle, finally answered</span>
+              <span class="swipe-hint" aria-hidden="true">swipe →</span>
+              <div
+                class="gallery boards"
+                role="group"
+                aria-label="Other puzzles from the same family — variations to solve next"
+              >
+                <figure class="shot">
+                  <div class="frame">
+                    <img
+                      src="20231111_124126.png"
+                      alt="A 13-piece wooden brain-teaser puzzle, all pieces packed into a square tray"
+                      loading="lazy"
+                    />
+                  </div>
+                  <figcaption>13-piece square — the classic + one</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame">
+                    <img
+                      src="IMG-20231110-WA0005.jpg"
+                      alt="A wooden puzzle with a zigzag mountain-shaped cavity to fill with tetromino-like pieces"
+                      loading="lazy"
+                    />
+                  </div>
+                  <figcaption>A mountain-shaped tray, not a rectangle</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame">
+                    <img
+                      src="IMG-20241230-WA0003.jpg"
+                      alt="A calendar puzzle where the pieces must cover every square except today's month and date"
+                      loading="lazy"
+                    />
+                  </div>
+                  <figcaption>The calendar puzzle — a new board every day</figcaption>
+                </figure>
+                <figure class="shot">
+                  <div class="frame">
+                    <img
+                      src="IMG-20260521-WA0005.jpg"
+                      alt="A wooden puzzle made of plus-sign pieces packed into a tray with an X-shaped cavity"
+                      loading="lazy"
+                    />
+                  </div>
+                  <figcaption>Plus-shaped pieces, an X-shaped hole</figcaption>
+                </figure>
+              </div>
+              <span class="plate-caption">the family is bigger than one rectangle — swipe through</span>
             </div>
             <h2 class="chapter-statement fade">
-              A childhood puzzle, an old obsession — finally answered in code.
+              One rectangle is just the start — a whole family of these puzzles
+              is waiting.
             </h2>
             <div class="chapter-text fade">
               <p>
-                Twelve shapes, one stubborn rectangle, and a habit that runs
-                through three generations of my family. What my dad does by hand
-                on a quiet afternoon, a few lines of backtracking now do in an
-                instant. Same puzzle, same joy — just a new way to say: yes, it
-                can be solved.
+                The 6 × 10 board is the famous one, but it is only the opening
+                move. There is a 13-piece square variant, a tray shaped like a
+                mountain instead of a rectangle, a calendar puzzle that hides a
+                different date every day, and boards made entirely of
+                plus-shaped pieces. Same idea, different constraints — each one
+                its own little combinatorial world.
+              </p>
+              <p>
+                So the next job for this little solver is obvious: teach it the
+                rest. Arbitrary board shapes, custom piece sets, fixed cells
+                that must stay uncovered. Same backtracking heart, more puzzles
+                it can answer — including, hopefully, whichever one my dad
+                sends next.
               </p>
             </div>
           </section>
